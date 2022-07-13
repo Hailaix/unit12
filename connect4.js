@@ -89,7 +89,7 @@ class Game {
           y < this.height &&
           x >= 0 &&
           x < this.width &&
-          this.gameBoard[y][x] === this.currentPlayer
+          this.gameBoard[y][x] === this.currentPlayer + 1
       );
     }
     for (let y = 0; y < this.height; y++) {
@@ -110,13 +110,6 @@ class Player{
     this.color = color;
   }
 }
-// const p1 = new Player('blue');
-// const p2 = new Player('red');
-// new Game(6, 7, p1, p2);
-// const resetbutton = document.getElementById('restart');
-// resetbutton.addEventListener('click', (e) => {
-//   new Game(6, 7, p1, p2);
-// })
 const playerForm = document.getElementById('startGame');
 playerForm.addEventListener('submit', e =>{
   e.preventDefault();
