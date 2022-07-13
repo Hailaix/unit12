@@ -13,15 +13,22 @@
   width: 80%;
   height: 80%;
   border-radius: 50%;
+  position: relative;
+  animation-name: drop;
+  animation-duration: 1s;
+}
+@keyframes drop {
+  from {bottom:400px;}
+  to {bottom:0px;}
 }
 
-.piece.p1 {
+/* .piece.p1 {
   background-color: red;
 }
 
 .piece.p2 {
   background-color: blue;
-}
+} */
 
 /* column-top is table row of clickable areas for each column */
 

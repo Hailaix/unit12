@@ -5,13 +5,15 @@
 //  * board fills (tie)
 //  */
 class Game {
-  constructor(height, width) {
+  constructor(height, width,...players) {
     this.height = height;
     this.width = width;
-    this.currentPlayer = 1;
+    this.currentPlayer = 0;
+    this.players = players;
     this.gameBoard = [];
     this.makeBoard();
     this.makeHtmlBoard();
+    this.ongoing = true;
   }
   makeBoard() {
     for (let y = 0; y < this.height; y++) {
@@ -23,7 +25,7 @@ class Game {
     board.innerHTML = ''; //empty the board
     const top = document.createElement('tr');
     top.setAttribute('id', 'column-top');
-    top.addEventListener('click', this.handleClick.bind(this));
+    top.addEventListener('click', this.handleClick.bind(this)); //have to bind the function to the game
     for (let x = 0; x < this.width; x++) {
       const headCell = document.createElement('td');
       headCell.setAttribute('id', x);
@@ -51,7 +53,7 @@ class Game {
   placeInTable(y, x) {
     const piece = document.createElement('div');
     piece.classList.add('piece');
-    piece.classList.add(`p${this.currentPlayer}`);
+    piece.style.backgroundColor = this.players[this.currentPlayer].color; //sets the piece color
     piece.style.top = -50 * (y + 2); //?
     const spot = document.getElementById(`${y}-${x}`);
     spot.append(piece);
@@ -60,20 +62,24 @@ class Game {
     alert(msg);
   }
   handleClick(evt) {
-    const x = +evt.target.id;
-    const y = this.findSpotForCol(x);
-    if (y === null) {
-      return;
+    if (this.ongoing) {
+      const x = +evt.target.id;
+      const y = this.findSpotForCol(x);
+      if (y === null) {
+        return;
+      }
+      this.gameBoard[y][x] = this.currentPlayer + 1;
+      this.placeInTable(y, x);
+      if (this.checkForWin()) {
+        this.ongoing = false;
+        return this.endGame(`Player ${this.currentPlayer + 1} won!`);
+      }
+      if (this.gameBoard.every(row => row.every(cell => cell))) {
+        this.ongoing = false;
+        return this.endGame('Tie!');
+      }
+      this.currentPlayer = this.currentPlayer === 0 ? 1 : 0;
     }
-    this.gameBoard[y][x] = this.currentPlayer;
-    this.placeInTable(y, x);
-    if (this.checkForWin()) {
-      return this.endGame(`Player ${this.currentPlayer} won!`);
-    }
-    if (this.gameBoard.every(row => row.every(cell => cell))) {
-      return this.endGame('Tie!');
-    }
-    this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
   }
   checkForWin() {
     const _win = (cells) => {
@@ -99,8 +105,15 @@ class Game {
     }
   }
 }
-new Game(6, 7);
+class Player{
+  constructor(color){
+    this.color = color;
+  }
+}
+const p1 = new Player('blue');
+const p2 = new Player('red');
+new Game(6, 7, p1, p2);
 const resetbutton = document.getElementById('restart');
-resetbutton.addEventListener('click',(e) =>{
-  new Game(6,7);
+resetbutton.addEventListener('click', (e) => {
+  new Game(6, 7, p1, p2);
 })
